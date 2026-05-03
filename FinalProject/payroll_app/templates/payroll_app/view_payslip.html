@@ -1,0 +1,100 @@
+{% extends "payroll_app/base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="fw-bold mb-0">View Payslip</h2>
+
+        <a href="{% url 'payslips' %}" class="btn btn-secondary btn-sm">
+            Back
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm p-4">
+
+        <h5 class="fw-bold mb-3">General Details</h5>
+
+        <div class="mb-1">
+            <p><strong>NAME:</strong> {{ payslip.id_number.name }}</p>
+            <p><strong>ID NUMBER:</strong> {{ payslip.id_number.id_number }}</p>
+            <p><strong>DATE:</strong> {{ payslip.month }} {{ payslip.date_range }}, {{ payslip.year }}</p>
+            <p><strong>PAYSLIP ID:</strong> {{ payslip.id }}</p>
+            <p><strong>CYCLE:</strong> {{ payslip.pay_cycle }}</p>
+        </div>
+
+        <hr>
+
+        <!-- earnings -->
+        <h5 class="fw-bold mb-3">Earnings:</h5>
+
+        <div class="mb-1">
+            <div class="d-flex justify-content-between">
+                <span>Base Pay</span>
+                <span>PHP {{ payslip.rate|floatformat:2 }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <span>Allowances</span>
+                <span>PHP {{ payslip.earnings_allowance|floatformat:2 }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <span>Overtime</span>
+                <span>PHP {{ payslip.overtime|floatformat:2 }}</span>
+            </div>
+        </div>
+        
+        <hr>
+        <div class="d-flex justify-content-between fs-5 fw-semibold mb-5">
+            <span>GROSS PAY</span>
+            <span>PHP {{ payslip.rate|add:payslip.earnings_allowance|add:payslip.overtime|floatformat:2 }}</span>
+        </div>
+        <hr>
+
+        <!-- deductions -->
+        <h5 class="fw-bold mb-2">Deductions:</h5>
+
+        <div class="mb-2">
+
+            {% if payslip.pay_cycle == 1 %}
+                <div class="d-flex justify-content-between">
+                    <span>PAG-IBIG</span>
+                    <span>PHP {{ payslip.pag_ibig|floatformat:2 }}</span>
+                </div>
+
+            {% else %}
+                <div class="d-flex justify-content-between">
+                    <span>PHILHEALTH</span>
+                    <span>PHP {{ payslip.deductions_health|floatformat:2 }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span>SSS</span>
+                    <span>PHP {{ payslip.sss|floatformat:2 }}</span>
+                </div>
+            {% endif %}
+
+            <hr>
+            <div class="d-flex justify-content-between fs-5 fw-semibold mb-5">
+                <span>TOTAL DEDUCTIONS</span>
+                <span>PHP {{ payslip.deductions_tax|floatformat:2 }}</span>
+            </div>
+            <hr>
+
+        </div>
+
+        <!-- total -->
+        <div class="d-flex justify-content-between fs-3 fw-bold">
+            <span>NET PAY:</span>
+            <span>PHP {{ payslip.total_pay|floatformat:2 }}</span>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

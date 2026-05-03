@@ -134,7 +134,7 @@
     <!-- navigation -->
     <div class="nav-links">
         <a href="{% url 'employees' %}">Employees</a>
-        <a href="#">Payslips</a>
+        <a href="{% url 'payslips' %}">Payslips</a>
 
         <!-- to prevent id crashes -->
         {% if current_user %}

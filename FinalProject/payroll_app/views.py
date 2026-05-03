@@ -7,6 +7,8 @@ from django.contrib import messages
 current_user = None
 
 def payslips(request):
+    global current_user
+
     if current_user is None:
         return redirect('login') 
   
@@ -127,6 +129,8 @@ def view_payslip(request, pk):
     return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip, 'current_user': current_user})
 
 def employees(request):
+    global current_user
+
     if current_user is None:
         return redirect('login') 
     
@@ -150,6 +154,8 @@ def employees(request):
         'current_user': current_user})
 
 def create_employee(request):
+    global current_user
+
     if current_user is None:
         return redirect('login') 
     
@@ -199,6 +205,8 @@ def create_employee(request):
     return render(request, 'payroll_app/create_employee.html')
 
 def update_employee(request, id):
+    global current_user
+
     if current_user is None:
         return redirect('login') 
     
@@ -240,6 +248,8 @@ def update_employee(request, id):
     return render(request, 'payroll_app/update_employee.html', {'emp': emp, 'current_user': current_user})
 
 def delete_employee(request, id):
+    global current_user
+
     if current_user is None:
         return redirect('login')
      
@@ -252,6 +262,8 @@ def delete_employee(request, id):
 
 # add overtime 
 def add_overtime(request, id):
+    global current_user
+
     if current_user is None:
         return redirect('login') 
     
@@ -328,6 +340,8 @@ def signup_view(request):
 
 
 def manage_account(request, pk):
+    global current_user
+
     if current_user is None:
         return redirect('login') 
     
@@ -356,6 +370,8 @@ def logout_view(request):
 
 
 def change_password(request, pk):
+    global current_user
+    
     if current_user is None:
         return redirect('login') 
     
