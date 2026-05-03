@@ -5,8 +5,21 @@
 
     <!-- header and + employee button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Employees</h2>
 
+        <!-- left side: title + message -->
+        <div class="d-flex align-items-center gap-3">
+            <h2 class="fw-bold mb-0">Employees</h2>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div id="flash-message" class="badge bg-success px-3 py-2">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- right side -->
         <a href="{% url 'create_employee' %}" class="btn btn-secondary">
             + New Employee
         </a>
@@ -32,8 +45,8 @@
                 <tr>
                     <td>{{ emp.name }}</td>
                     <td>{{ emp.id_number }}</td>
-                    <td>{{ emp.rate }}</td>
-                    <td>{{ emp.allowance|default:"0" }}</td>
+                    <td>₱ {{ emp.rate|floatformat:2 }}</td>
+                    <td>₱ {{ emp.allowance|default:"0"|floatformat:2 }}</td>
                     <td>{{ emp.overtime_pay|default:"0" }}</td>
 
                     <td>
@@ -87,5 +100,17 @@
     </div>
 
 </div>
+
+<!-- auto-hide message -->
+<script>
+    setTimeout(() => {
+        const msg = document.getElementById('flash-message');
+        if (msg) {
+            msg.style.transition = "opacity 0.5s ease";
+            msg.style.opacity = "0";
+            setTimeout(() => msg.remove(), 500);
+        }
+    }, 5000); // 5 seconds
+</script>
 
 {% endblock %}

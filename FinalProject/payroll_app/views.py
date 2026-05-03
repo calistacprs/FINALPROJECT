@@ -146,7 +146,7 @@ def create_employee(request):
         # prevent duplicate ID numbers
         if Employee.objects.filter(id_number=id_number).exists():
             messages.error(request, "ID Number already exists.")
-            return redirect('create_employee')
+            return render(request, 'payroll_app/create_employee.html')
 
         Employee.objects.create(
             name=name,
