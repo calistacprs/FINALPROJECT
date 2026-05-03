@@ -10,6 +10,10 @@
     min-height: 100vh;
 }
 
+    .login-card {
+        background-color: rgba(206, 169, 255, 0.329);
+    }
+
     .carousel-img {
         width: 50%;
         height: 350px;
@@ -38,7 +42,7 @@
                         {% csrf_token %}
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Username</label>
+                            <label class="form-label fw-semibold text-white">Username</label>
                             <input type="text" name="username" class="form-control" required>
                         </div>
 
@@ -70,15 +74,17 @@
                                 <div class="carousel-inner">
 
                                     <div class="carousel-item active">
-                                        <img src="{% static 'JB1.jpg' %}" class="d-block carousel-img mx-auto" alt="...">
+                                        <img src="{% static 'JB1.png' %}" class="d-block carousel-img mx-auto" alt="...">
                                     </div>
 
                                     <div class="carousel-item">
-                                        <img src="{% static 'JB2.jpg' %}" class="d-block carousel-img mx-auto" alt="...">
+                                        <img src="{% static 'JB2.png' %}" class="d-block carousel-img mx-auto" alt="...">
                                     </div>
 
                                     <div class="carousel-item">
-                                        <img src="{% static 'JB3.jpg' %}" class="d-block carousel-img mx-auto" alt="...">
+                                        <img src="{% static 'JB3.png' %}" class="d-block carousel-img mx-auto" alt="...">
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
