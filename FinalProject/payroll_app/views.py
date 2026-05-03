@@ -127,9 +127,10 @@ def view_payslip(request, pk):
     return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip, 'current_user': current_user})
 
 def employees(request):
-    query = (request.GET.get('q') or "").strip()
     if current_user is None:
         return redirect('login') 
+    
+    query = (request.GET.get('q') or "").strip()
     
     if query:
         if query.isdigit():

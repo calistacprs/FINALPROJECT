@@ -38,9 +38,15 @@
             </form>
 
             <!-- ADD EMPLOYEE -->
-            <a href="{% url 'create_employee' %}" class="btn btn-secondary btn-sm">
-                + New Employee
-            </a>
+            <div class="d-flex gap-2">
+                <a href="{% url 'create_employee' %}" class="btn btn-secondary btn-sm">
+                    + New Employee
+                </a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                    Logout
+                </a>
+            </div>
+
 
         </div>
     </div>
