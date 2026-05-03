@@ -3,6 +3,7 @@ from .models import Employee, Payslip, Account
 from django.db import transaction
 from django.db.models import F
 from django.contrib import messages
+import calendar
 
 current_user = None
 
@@ -28,10 +29,13 @@ def payslips(request):
         year = request.POST.get("year")
         pay_cycle = request.POST.get("pay_cycle")
 
+        month_number = months.index(month) + 1
+        last_day = calendar.monthrange(int(year), month_number)[1]
+
         if(pay_cycle == "1"):
             date_range = "1-15"
         else:
-            date_range = "16-30"
+            date_range = "16-" + str(last_day)
 
         if(payroll_for == "all"):
             selected_employees = Employee.objects.all()
