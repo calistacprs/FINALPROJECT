@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Employee, Payslip
+from .models import Employee, Payslip, Account
 from django.db import transaction
 from django.db.models import F
 from django.contrib import messages
