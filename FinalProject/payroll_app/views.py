@@ -124,6 +124,11 @@ def create_employee(request):
     if request.method == "POST":
         name = (request.POST.get('name') or "").strip()
         id_number = (request.POST.get('id_number') or "").strip()
+        
+        # ID must be numbers only
+        if not id_number.isdigit():
+            messages.error(request, "ID Number must contain numbers only.")
+            return render(request, 'payroll_app/create_employee.html')
 
         # validate required fields
         if not name or not id_number:
