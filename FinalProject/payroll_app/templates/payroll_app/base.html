@@ -9,7 +9,6 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- css styling instructions -->
     <style>
         body {
             min-height: 100vh;
@@ -20,80 +19,82 @@
 
         /* header */
         .header {
-            background: linear-gradient(to right, #5a2e5a, #3d1f3d);
+            position: relative;
+            background: radial-gradient(circle at top, #5b3a8a, #2e1a47 75%);
             padding: 20px 40px;
+            overflow: hidden;
+        }
+
+        /* subtle JB overlay */
+        .header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            background: url("https://images.genius.com/cff977262de4bf712a530580d27c7412.1000x1000x1.jpg");
+            background-size: cover;
+            background-position: center;
+
+            opacity: 0.2; 
+            filter: grayscale(100%) contrast(130%) brightness(80%);
+            mix-blend-mode: overlay;
+        }
+
+        /* soft glow layer */
+        .header::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.05), transparent);
+        }
+
+        /* keep content above overlay */
+        .header > * {
+            position: relative;
+            z-index: 1;
         }
 
         /* logo container */
         .logo {
             display: flex;
-            gap: 5px;
+            gap: 2px;
+            text-shadow: 0 0 6px rgba(255, 154, 213, 0.3);
         }
 
-        /* for each letter */
+        /* letters */
         .logo span {
             font-size: 50px;
             font-weight: 900;
+            letter-spacing: 3px;
             line-height: 1;
 
+            background: linear-gradient(45deg, #ff9ad5, #c084fc, #7dd3fc);
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
-
-            background-size: cover;
-            background-position: center;
         }
 
-        /* image for each letter and tint */
-        .s {
-            background-image:
-                linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.4)),
-                url("https://i.pinimg.com/736x/30/e8/24/30e82442400fe2410b52daebd28a3bf9.jpg");
-        }
-
-        .h {
-            background-image:
-                linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.4)),
-                url("https://i.pinimg.com/736x/71/b5/b4/71b5b47c51b3d73496c0fe675cfd3995.jpg");
-        }
-
-        .e {
-            background-image:
-                linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.4)),
-                url("https://i.pinimg.com/1200x/d2/97/b5/d297b5d28d74c9613b166e0399506c33.jpg");
-        }
-
-        .m {
-            background-image:
-                linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.4)),
-                url("https://i.pinimg.com/736x/50/c9/ec/50c9ec632080e099cb26991fa2a5b500.jpg");
-        }
-
-        .u {
-            background-image:
-                linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.4)),
-                url("https://i.pinimg.com/736x/e6/cb/81/e6cb81a10c84aef82178233efa52e232.jpg");
-        }
-
-        /* "payroll system" part of logo */
+        /* subtitle */
         .subtitle {
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            margin-top: -5px;
+            color: #e9d5ff;
+            font-size: 13px;
+            letter-spacing: 4px;
+            margin-left: 6px;
+            opacity: 0.8;
+            transform: translateY(5px);
         }
 
         /* navigation */
         .nav-links a {
-            color: white;
+            color: #f5d0fe;
             margin-left: 20px;
             text-decoration: none;
             font-weight: 500;
+            transition: 0.2s ease;
         }
 
         .nav-links a:hover {
             text-decoration: underline;
+            color: white;
         }
 
         /* content */
@@ -104,8 +105,8 @@
 
         /* footer */
         footer {
-            background-color: #5a2e5a; 
-            color: white;
+            background-color: #3b0764;
+            color: #e9d5ff;
             text-align: center;
             padding: 10px;
         }
@@ -118,18 +119,18 @@
 <div class="header d-flex justify-content-between align-items-center">
 
     <!-- shemu logo -->
-    <div>
+    <div class="d-flex align-items-center">
         <div class="logo">
-            <span class="s">S</span>
-            <span class="h">H</span>
-            <span class="e">E</span>
-            <span class="m">M</span>
-            <span class="u">U</span>
+            <span>S</span>
+            <span>H</span>
+            <span>E</span>
+            <span>M</span>
+            <span>U</span>
         </div>
-        <div class="subtitle">Payroll System</div>
+        <div class="subtitle">PAYROLL</div>
     </div>
 
-    <!-- employee and playslip -->
+    <!-- navigation -->
     <div class="nav-links">
         <a href="#">Employees</a>
         <a href="#">Payslips</a>
@@ -137,7 +138,7 @@
 
 </div>
 
-<!-- insert main content here -->
+<!-- content -->
 <div class="content container">
     {% block heading %}{% endblock %}
     {% block content %}{% endblock %}
