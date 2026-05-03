@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Employee, Payslip
-from django.db import transaction
 from django.db.models import F
 from django.contrib import messages
 
@@ -229,7 +228,6 @@ def delete_employee(request, id):
 
 
 # add overtime 
-@transaction.atomic
 def add_overtime(request, id):
     if request.method == "POST":
         emp = get_object_or_404(Employee, id=id)
@@ -240,18 +238,20 @@ def add_overtime(request, id):
             messages.error(request, "Hours must be a valid number.")
             return redirect('employees')
 
-        # prevent negative or absurd values
+        # prevent negative or unrealistic values
         if hours <= 0 or hours > 1000:
             messages.error(request, "Enter a valid number of hours.")
             return redirect('employees')
 
-        # ensure field is not None
+        # ensure overtime is not None
         if emp.overtime_pay is None:
             emp.overtime_pay = 0
+            emp.save()
 
+        # computes overtime
         overtime = (emp.rate / 160) * 1.5 * hours
 
-        # use F() to avoid race conditions (simultaneous updates)
+        # safe update using F() --> extra measure 
         Employee.objects.filter(id=emp.id).update(
             overtime_pay=F('overtime_pay') + overtime
         )
