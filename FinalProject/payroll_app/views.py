@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Employee, Payslip
-
-def create_employee(request):
-    return render(request, 'payroll_app/create_employee.html')
+from django.db import transaction
+from django.db.models import F
+from django.contrib import messages
 
 def payslips(request):
     employee_objects = Employee.objects.all()
@@ -115,3 +115,126 @@ def payslips(request):
 def view_payslip(request, pk):
     payslip = get_object_or_404(Payslip, pk=pk)
     return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip})
+
+def employees(request):
+    employees = Employee.objects.all().order_by('name')
+    return render(request, 'payroll_app/employees.html', {'employees': employees})
+
+def create_employee(request):
+    if request.method == "POST":
+        name = (request.POST.get('name') or "").strip()
+        id_number = (request.POST.get('id_number') or "").strip()
+
+        # validate required fields
+        if not name or not id_number:
+            messages.error(request, "Name and ID Number are required.")
+            return redirect('create_employee')
+
+        # parse numbers safely
+        try:
+            rate = float(request.POST.get('rate') or 0)
+            allowance = float(request.POST.get('allowance') or 0)
+        except ValueError:
+            messages.error(request, "Rate and Allowance must be valid numbers.")
+            return redirect('create_employee')
+
+        # prevent negative values
+        if rate < 0 or allowance < 0:
+            messages.error(request, "Rate and Allowance cannot be negative.")
+            return redirect('create_employee')
+
+        # prevent duplicate ID numbers
+        if Employee.objects.filter(id_number=id_number).exists():
+            messages.error(request, "ID Number already exists.")
+            return redirect('create_employee')
+
+        Employee.objects.create(
+            name=name,
+            id_number=id_number,
+            rate=rate,
+            allowance=allowance,
+            overtime_pay=0
+        )
+
+        messages.success(request, "Employee created successfully.")
+        return redirect('employees')
+
+    return render(request, 'payroll_app/create_employee.html')
+
+def update_employee(request, id):
+    emp = get_object_or_404(Employee, id=id)
+
+    if request.method == "POST":
+        name = (request.POST.get('name') or "").strip()
+        id_number = (request.POST.get('id_number') or "").strip()
+
+        if not name or not id_number:
+            messages.error(request, "Name and ID Number are required.")
+            return redirect('update_employee', id=id)
+
+        try:
+            rate = float(request.POST.get('rate') or 0)
+            allowance = float(request.POST.get('allowance') or 0)
+        except ValueError:
+            messages.error(request, "Rate and Allowance must be valid numbers.")
+            return redirect('update_employee', id=id)
+
+        if rate < 0 or allowance < 0:
+            messages.error(request, "Rate and Allowance cannot be negative.")
+            return redirect('update_employee', id=id)
+
+        # prevent duplicate ID numbers (excluding current employee)
+        if Employee.objects.filter(id_number=id_number).exclude(id=id).exists():
+            messages.error(request, "ID Number already exists.")
+            return redirect('update_employee', id=id)
+
+        emp.name = name
+        emp.id_number = id_number
+        emp.rate = rate
+        emp.allowance = allowance
+        emp.save()
+
+        messages.success(request, "Employee updated.")
+        return redirect('employees')
+
+    return render(request, 'payroll_app/update_employee.html', {'emp': emp})
+
+def delete_employee(request, id):
+    if request.method == "POST":
+        emp = get_object_or_404(Employee, id=id)
+        emp.delete()
+        messages.success(request, "Employee deleted.")
+    return redirect('employees')
+
+
+# add overtime 
+@transaction.atomic
+def add_overtime(request, id):
+    if request.method == "POST":
+        emp = get_object_or_404(Employee, id=id)
+
+        try:
+            hours = float(request.POST.get("hours") or 0)
+        except ValueError:
+            messages.error(request, "Hours must be a valid number.")
+            return redirect('employees')
+
+        # prevent negative or absurd values
+        if hours <= 0 or hours > 1000:
+            messages.error(request, "Enter a valid number of hours.")
+            return redirect('employees')
+
+        # ensure field is not None
+        if emp.overtime_pay is None:
+            emp.overtime_pay = 0
+
+        overtime = (emp.rate / 160) * 1.5 * hours
+
+        # use F() to avoid race conditions (simultaneous updates)
+        Employee.objects.filter(id=emp.id).update(
+            overtime_pay=F('overtime_pay') + overtime
+        )
+
+        messages.success(request, "Overtime added.")
+
+    return redirect('employees')
