@@ -4,10 +4,75 @@
 
 <style>
     body {
-    background-image: url("{% static 'JB_BG.png' %}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-}
+        background-image: url("{% static 'JB_BG.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
 </style>
+
+<div class="container mt-2">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-white">Update Employee</h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Name</label>
+                            <input type="text" name="name" value="{{ emp.name }}" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">ID Number</label>
+                            <input type="number" name="id_number" value="{{ emp.id_number }}" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Rate</label>
+                            <input type="number" step="0.01" min="0" name="rate" value="{{ emp.rate }}" class="form-control" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Allowance (Optional)</label>
+                            <input type="number" step="0.01" min="0" name="allowance" value="{{ emp.allowance }}" class="form-control">
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark">
+                                Update
+                            </button>
+
+                            <a href="{% url 'employees' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
