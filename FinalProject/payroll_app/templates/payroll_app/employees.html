@@ -3,10 +3,10 @@
 
 <div class="container mt-2">
 
-    <!-- header and + employee button -->
+    <!-- header + search + button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <!-- left side: title + message -->
+        <!-- left side -->
         <div class="d-flex align-items-center gap-3">
             <h2 class="fw-bold mb-0">Employees</h2>
 
@@ -21,13 +21,27 @@
 
         <!-- right side -->
         <div class="d-flex gap-2">
-            <a href="{% url 'create_employee' %}" class="btn btn-secondary">
+
+            <!-- SEARCH -->
+            <form method="GET" class="d-flex gap-2">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control form-control-sm"
+                    placeholder="Search name or ID..."
+                    value="{{ query }}"
+                    style="width: 200px;"
+                >
+                <button type="submit" class="btn btn-dark btn-sm">
+                    Search
+                </button>
+            </form>
+
+            <!-- ADD EMPLOYEE -->
+            <a href="{% url 'create_employee' %}" class="btn btn-secondary btn-sm">
                 + New Employee
             </a>
-            
-            <a href="{% url 'logout' %}" class="btn btn-outline-danger">
-                Logout
-            </a>
+
         </div>
     </div>
 
@@ -51,13 +65,32 @@
                 <tr>
                     <td>{{ emp.name }}</td>
                     <td>{{ emp.id_number }}</td>
-                    <td>₱ {{ emp.rate|floatformat:2 }}</td>
-                    <td>₱ {{ emp.allowance|default:"0"|floatformat:2 }}</td>
-                    <td>{{ emp.overtime_pay|default:"0" }}</td>
+                    <td>
+                        {% if emp.rate and emp.rate > 0 %}
+                            ₱ {{ emp.rate|floatformat:2 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
 
                     <td>
+                        {% if emp.allowance and emp.allowance > 0 %}
+                            ₱ {{ emp.allowance|floatformat:2 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
 
-                        <!-- update and delete-->
+                    <td>
+                        {% if emp.overtime_pay and emp.overtime_pay > 0 %}
+                            ₱ {{ emp.overtime_pay|floatformat:2 }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <!-- update + delete -->
                         <div class="mb-2">
                             <a href="{% url 'update_employee' emp.id %}" 
                                class="btn btn-sm btn-secondary">
@@ -94,9 +127,16 @@
 
                     </td>
                 </tr>
+
                 {% empty %}
                 <tr>
-                    <td colspan="6">No employees found.</td>
+                    <td colspan="6" class="text-muted">
+                        {% if query %}
+                            No results found for "{{ query }}"
+                        {% else %}
+                            No employees found.
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -116,7 +156,7 @@
             msg.style.opacity = "0";
             setTimeout(() => msg.remove(), 500);
         }
-    }, 5000); // 5 seconds
+    }, 5000);
 </script>
 
 {% endblock %}

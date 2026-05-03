@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Employee, Payslip, Account
+from .models import Employee, Payslip
 from django.db import transaction
 from django.db.models import F
 from django.contrib import messages
@@ -127,11 +127,26 @@ def view_payslip(request, pk):
     return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip, 'current_user': current_user})
 
 def employees(request):
+    query = (request.GET.get('q') or "").strip()
     if current_user is None:
         return redirect('login') 
     
-    employees = Employee.objects.all().order_by('name')
-    return render(request, 'payroll_app/employees.html', {'employees': employees, 'current_user': current_user})
+    if query:
+        if query.isdigit():
+            # search by ID
+            employees = Employee.objects.filter(id_number__icontains=query)
+        else:
+            # search by name
+            employees = Employee.objects.filter(name__icontains=query)
+
+        employees = employees.order_by('name')
+    else:
+        employees = Employee.objects.all().order_by('name')
+
+    return render(request, 'payroll_app/employees.html', {
+        'employees': employees,
+        'query': query,
+        'current_user': current_user})
 
 def create_employee(request):
     if current_user is None:
@@ -141,7 +156,7 @@ def create_employee(request):
         name = (request.POST.get('name') or "").strip()
         id_number = (request.POST.get('id_number') or "").strip()
         
-        # ID must be numbers only
+        # ID must be numbers only (extra preventive measures)
         if not id_number.isdigit():
             messages.error(request, "ID Number must contain numbers only.")
             return render(request, 'payroll_app/create_employee.html')
@@ -235,7 +250,6 @@ def delete_employee(request, id):
 
 
 # add overtime 
-@transaction.atomic
 def add_overtime(request, id):
     if current_user is None:
         return redirect('login') 
@@ -249,18 +263,20 @@ def add_overtime(request, id):
             messages.error(request, "Hours must be a valid number.")
             return redirect('employees')
 
-        # prevent negative or absurd values
+        # prevent negative or unrealistic values
         if hours <= 0 or hours > 1000:
             messages.error(request, "Enter a valid number of hours.")
             return redirect('employees')
 
-        # ensure field is not None
+        # ensure overtime is not None
         if emp.overtime_pay is None:
             emp.overtime_pay = 0
+            emp.save()
 
+        # computes overtime
         overtime = (emp.rate / 160) * 1.5 * hours
 
-        # use F() to avoid race conditions (simultaneous updates)
+        # safe update using F() --> extra measure 
         Employee.objects.filter(id=emp.id).update(
             overtime_pay=F('overtime_pay') + overtime
         )
