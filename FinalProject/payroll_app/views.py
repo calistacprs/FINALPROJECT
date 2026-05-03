@@ -117,15 +117,31 @@ def view_payslip(request, pk):
     return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip})
 
 def employees(request):
-    employees = Employee.objects.all().order_by('name')
-    return render(request, 'payroll_app/employees.html', {'employees': employees})
+    query = (request.GET.get('q') or "").strip()
+
+    if query:
+        if query.isdigit():
+            # search by ID
+            employees = Employee.objects.filter(id_number__icontains=query)
+        else:
+            # search by name
+            employees = Employee.objects.filter(name__icontains=query)
+
+        employees = employees.order_by('name')
+    else:
+        employees = Employee.objects.all().order_by('name')
+
+    return render(request, 'payroll_app/employees.html', {
+        'employees': employees,
+        'query': query
+    })
 
 def create_employee(request):
     if request.method == "POST":
         name = (request.POST.get('name') or "").strip()
         id_number = (request.POST.get('id_number') or "").strip()
         
-        # ID must be numbers only
+        # ID must be numbers only (extra preventive measures)
         if not id_number.isdigit():
             messages.error(request, "ID Number must contain numbers only.")
             return render(request, 'payroll_app/create_employee.html')
