@@ -20,9 +20,15 @@
         </div>
 
         <!-- right side -->
-        <a href="{% url 'create_employee' %}" class="btn btn-secondary">
-            + New Employee
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{% url 'create_employee' %}" class="btn btn-secondary">
+                + New Employee
+            </a>
+            
+            <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                Logout
+            </a>
+        </div>
     </div>
 
     <!-- table -->

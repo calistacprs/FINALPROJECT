@@ -134,6 +134,12 @@
     <div class="nav-links">
         <a href="#">Employees</a>
         <a href="#">Payslips</a>
+
+        <!-- to prevent id crashes -->
+        {% if current_user %}
+            <a href="{% url 'manage_account' current_user.pk %}">Account</a>
+        {% endif %}
+        
     </div>
 
 </div>

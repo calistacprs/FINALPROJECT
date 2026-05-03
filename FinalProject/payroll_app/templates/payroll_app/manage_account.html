@@ -1,0 +1,51 @@
+{% extends "payroll_app/base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Manage Account</h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+
+                    <!-- Account Info -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Username</label>
+                        <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Password</label>
+                        <input type="password" class="form-control" value="{{ user.password }}" disabled>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-grid gap-3">
+
+                        <a href="{% url 'change_password' user.pk %}" class="btn btn-dark">Change Password</a>
+
+                        <form method="POST" action="{% url 'delete_account' user.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100">Delete Account</button>
+                        </form>
+
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>
+
+                        <a href="{% url 'employees' %}" class="btn btn-outline-secondary">Back</a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

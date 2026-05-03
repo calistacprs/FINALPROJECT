@@ -1,10 +1,15 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Employee, Payslip
+from .models import Employee, Payslip, Account
 from django.db import transaction
 from django.db.models import F
 from django.contrib import messages
 
+current_user = None
+
 def payslips(request):
+    if current_user is None:
+        return redirect('login') 
+  
     employee_objects = Employee.objects.all()
     payslip_objects = Payslip.objects.all()
 
@@ -98,7 +103,8 @@ def payslips(request):
                 'employees': employee_objects,
                 'payslips': payslip_objects,
                 'months': months,
-                'message': message
+                'message': message,
+                'current_user': current_user
             })
 
         return redirect('payslips')
@@ -108,19 +114,29 @@ def payslips(request):
             'employees': employee_objects,
             'payslips': payslip_objects,
             'months': months,
-            'message': message
+            'message': message,
+            'current_user': current_user
         })
 
 
 def view_payslip(request, pk):
+    if current_user is None:
+        return redirect('login') 
+    
     payslip = get_object_or_404(Payslip, pk=pk)
-    return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip})
+    return render(request, 'payroll_app/view_payslip.html', {'payslip': payslip, 'current_user': current_user})
 
 def employees(request):
+    if current_user is None:
+        return redirect('login') 
+    
     employees = Employee.objects.all().order_by('name')
-    return render(request, 'payroll_app/employees.html', {'employees': employees})
+    return render(request, 'payroll_app/employees.html', {'employees': employees, 'current_user': current_user})
 
 def create_employee(request):
+    if current_user is None:
+        return redirect('login') 
+    
     if request.method == "POST":
         name = (request.POST.get('name') or "").strip()
         id_number = (request.POST.get('id_number') or "").strip()
@@ -167,6 +183,9 @@ def create_employee(request):
     return render(request, 'payroll_app/create_employee.html')
 
 def update_employee(request, id):
+    if current_user is None:
+        return redirect('login') 
+    
     emp = get_object_or_404(Employee, id=id)
 
     if request.method == "POST":
@@ -202,9 +221,12 @@ def update_employee(request, id):
         messages.success(request, "Employee updated.")
         return redirect('employees')
 
-    return render(request, 'payroll_app/update_employee.html', {'emp': emp})
+    return render(request, 'payroll_app/update_employee.html', {'emp': emp, 'current_user': current_user})
 
 def delete_employee(request, id):
+    if current_user is None:
+        return redirect('login')
+     
     if request.method == "POST":
         emp = get_object_or_404(Employee, id=id)
         emp.delete()
@@ -215,6 +237,9 @@ def delete_employee(request, id):
 # add overtime 
 @transaction.atomic
 def add_overtime(request, id):
+    if current_user is None:
+        return redirect('login') 
+    
     if request.method == "POST":
         emp = get_object_or_404(Employee, id=id)
 
@@ -243,3 +268,102 @@ def add_overtime(request, id):
         messages.success(request, "Overtime added.")
 
     return redirect('employees')
+
+def login_view(request):
+    global current_user
+    message = request.GET.get("message", "")
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        account = Account.objects.filter(username=username, password=password).first()
+
+        if account:
+            current_user = account
+            return redirect('employees')
+        else:
+            message = "Invalid login"
+
+    return render(request, 'payroll_app/login.html', {
+        'message': message,
+        'current_user': current_user
+    })
+
+
+def signup_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        existing_account = Account.objects.filter(username=username).first()
+
+        if existing_account:
+            return render(request, 'payroll_app/signup.html', {
+                'message': 'Account already exists'
+            })
+
+        Account.objects.create(username=username, password=password)
+
+        return redirect('/?message=Account created successfully')
+
+    return render(request, 'payroll_app/signup.html')
+
+
+def manage_account(request, pk):
+    if current_user is None:
+        return redirect('login') 
+    
+    user_account = get_object_or_404(Account, pk=pk)
+
+    return render(request, 'payroll_app/manage_account.html', {
+        'user': user_account,
+        'current_user': current_user
+    })
+
+
+def delete_account(request, pk):
+    global current_user
+
+    Account.objects.filter(pk=pk).delete()
+    current_user = None
+
+    return redirect('login')
+
+
+def logout_view(request):
+    global current_user
+    current_user = None
+
+    return redirect('login')
+
+
+def change_password(request, pk):
+    if current_user is None:
+        return redirect('login') 
+    
+    account = get_object_or_404(Account, pk=pk)
+    message = ""
+
+    if request.method == "POST":
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if current_password != account.password:
+            message = "Current password is incorrect"
+
+        elif new_password != confirm_password:
+            message = "New passwords do not match"
+
+        else:
+            account.password = new_password
+            account.save()
+
+            return redirect('manage_account', pk=account.pk)
+
+    return render(request, 'payroll_app/change_password.html', {
+        'account': account,
+        'display': message,
+        'current_user': current_user
+    })
