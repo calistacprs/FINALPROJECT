@@ -4,7 +4,7 @@
 <div class="container mt-2">
 
 <div class="text-center mb-4">
-    <h2 class="fw-bold">Create Employee</h2>
+    <h2 class="fw-bold">Update Employee</h2>
 </div>
 
 <div class="row justify-content-center">
@@ -18,27 +18,31 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input type="text" name="name" class="form-control"
+                               value="{{ emp.name }}" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">ID Number</label>
-                        <input type="text" name="id_number" class="form-control" required>
+                        <input type="text" name="id_number" class="form-control"
+                               value="{{ emp.id_number }}" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Rate</label>
-                        <input type="number" step="0.01" min="0" name="rate" class="form-control" required>
+                        <input type="number" step="0.01" min="0" name="rate"
+                               class="form-control" value="{{ emp.rate }}" required>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-semibold">Allowance (Optional)</label>
-                        <input type="number" step="0.01" min="0" name="allowance" class="form-control">
+                        <label class="form-label fw-semibold">Allowance</label>
+                        <input type="number" step="0.01" min="0" name="allowance"
+                               class="form-control" value="{{ emp.allowance }}">
                     </div>
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-dark">
-                            Submit
+                            Update Employee
                         </button>
 
                         <a href="{% url 'employees' %}" class="btn btn-outline-secondary">
