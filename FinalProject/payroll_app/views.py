@@ -10,8 +10,7 @@ def payslips(request):
     global current_user
 
     if current_user is None:
-        return redirect('login') 
-  
+        return redirect('login')  
     employee_objects = Employee.objects.all()
     payslip_objects = Payslip.objects.all()
 
