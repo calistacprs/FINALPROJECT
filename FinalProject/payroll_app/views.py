@@ -205,7 +205,8 @@ def create_employee(request):
         messages.success(request, "Employee created successfully.")
         return redirect('employees')
 
-    return render(request, 'payroll_app/create_employee.html')
+    return render(request, 'payroll_app/create_employee.html', {
+        'current_user': current_user})
 
 def update_employee(request, id):
     global current_user
