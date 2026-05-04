@@ -4,12 +4,23 @@
 
 <style>
     body {
-    background-image: url("{% static 'bg.png' %}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-}
+        background-image: url("{% static 'bg.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+
+    .custom-btn {
+        border-radius: 8px;     /* pill shape */
+        padding: 8px 18px;        /* better spacing */
+        font-weight: 500;         /* cleaner font weight */
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
 </style>
 
 <div class="container mt-2">
@@ -43,14 +54,14 @@
                     value="{{ query }}"
                     style="width: 200px;"
                 >
-                <button type="submit" class="btn btn-dark btn-sm">
-                    Search
+                <button 
+                    class="btn btn-dark btn-sm custom-btn">Search
                 </button>
             </form>
 
             <!-- ADD EMPLOYEE -->
             <div class="d-flex gap-2">
-                <a href="{% url 'create_employee' %}" class="btn btn-secondary btn-sm">
+                <a href="{% url 'create_employee' %}" class="btn btn-secondary btn-sm custom-btn">
                     + New Employee
                 </a>
                 <a href="{% url 'logout' %}" class="btn btn-outline-danger">
