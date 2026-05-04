@@ -118,9 +118,7 @@
                     <td>
                         <!-- update + delete -->
                         <div class="mb-2">
-                            <a href="{% url 'update_employee' emp.id %}" 
-                               class="btn btn-sm btn-secondary">
-                               Update
+                            <a href="{% url 'update_employee' emp.id %}"class="btn btn-sm btn-secondary"> Update
                             </a>
 
                             <form method="POST" action="{% url 'delete_employee' emp.id %}" style="display:inline;">

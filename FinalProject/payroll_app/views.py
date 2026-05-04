@@ -404,3 +404,12 @@ def change_password(request, pk):
         'display': message,
         'current_user': current_user
     })
+
+def delete_payslip(request, pk):
+    global current_user
+
+    if current_user is None:
+        return redirect('login')
+
+    Payslip.objects.filter(pk=pk).delete()
+    return redirect('payslips')

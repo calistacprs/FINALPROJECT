@@ -20,4 +20,5 @@ urlpatterns = [
 
     path('payslips/', views.payslips, name='payslips'),
     path('payslip/<int:pk>/', views.view_payslip, name='view_payslip'),
+    path("delete_payslip/<int:pk>/", views.delete_payslip, name="delete_payslip"),
 ]
