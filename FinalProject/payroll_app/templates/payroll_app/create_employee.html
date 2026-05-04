@@ -1,6 +1,7 @@
 {% extends "payroll_app/base.html" %}
 {% load static %}
 {% block content %}
+
 <style>
     body {
         background-image: url("{% static 'JB_BG.png' %}");
@@ -18,6 +19,12 @@
             0 0 6px rgba(255, 255, 255, 0.4);
     }
 </style>
+
+<!-- audio -->
+<audio id="bg-music" loop>
+    <source src="{% static 'music.mp3' %}" type="audio/mpeg">
+</audio>
+<!-- audio -->
 
 <div class="container mt-2">
 
@@ -39,7 +46,8 @@
                     {% endfor %}
                 {% endif %}
 
-                <form method="POST">
+                <!-- added onsubmit for audio -->
+                <form method="POST" onsubmit="fadeOutMusic()">
                     {% csrf_token %}
 
                     <div class="mb-3">
@@ -81,5 +89,36 @@
 </div>
 
 </div>
+
+<!-- code for music -->
+<script>
+let hasPlayed = false;
+
+// play music on first click anywhere
+document.addEventListener("click", function () {
+    if (!hasPlayed) {
+        const music = document.getElementById("bg-music");
+        music.volume = 0.5; 
+        music.play();
+        hasPlayed = true;
+    }
+}, { once: true });
+
+// fade out before submitting
+function fadeOutMusic() {
+    const music = document.getElementById("bg-music");
+    if (!music) return;
+
+    let fade = setInterval(() => {
+        if (music.volume > 0.05) {
+            music.volume -= 0.05;
+        } else {
+            music.pause();
+            music.currentTime = 0;
+            clearInterval(fade);
+        }
+    }, 100);
+}
+</script>
 
 {% endblock %}
