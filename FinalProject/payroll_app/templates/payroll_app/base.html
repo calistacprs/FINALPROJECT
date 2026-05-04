@@ -132,16 +132,14 @@
     </div>
 
     <!-- navigation -->
-    <div class="nav-links">
-        <a href="{% url 'employees' %}">Employees</a>
-        <a href="{% url 'payslips' %}">Payslips</a>
-
-        <!-- to prevent id crashes -->
-        {% if current_user %}
+    {% if current_user %}  
+        <div class="nav-links">
+            <a href="{% url 'employees' %}">Employees</a>
+            <a href="{% url 'payslips' %}">Payslips</a>
             <a href="{% url 'manage_account' current_user.pk %}">Account</a>
-        {% endif %}
-        
-    </div>
+            
+        </div>
+    {% endif %}
 
 </div>
 
