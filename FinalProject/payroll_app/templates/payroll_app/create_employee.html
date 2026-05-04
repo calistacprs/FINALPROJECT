@@ -47,7 +47,7 @@
                 {% endif %}
 
                 <!-- added onsubmit for audio -->
-                <form method="POST" onsubmit="fadeOutMusic()">
+                <form method="POST">
                     {% csrf_token %}
 
                     <div class="mb-3">
@@ -92,33 +92,14 @@
 
 <!-- code for music -->
 <script>
-let hasPlayed = false;
-
 // play music on first click anywhere
 document.addEventListener("click", function () {
-    if (!hasPlayed) {
-        const music = document.getElementById("bg-music");
-        music.volume = 0.5; 
+    const music = document.getElementById("bg-music");
+    if (music) {
+        music.volume = 0.5;
         music.play();
-        hasPlayed = true;
     }
 }, { once: true });
-
-// fade out before submitting
-function fadeOutMusic() {
-    const music = document.getElementById("bg-music");
-    if (!music) return;
-
-    let fade = setInterval(() => {
-        if (music.volume > 0.05) {
-            music.volume -= 0.05;
-        } else {
-            music.pause();
-            music.currentTime = 0;
-            clearInterval(fade);
-        }
-    }, 100);
-}
 </script>
 
 {% endblock %}
