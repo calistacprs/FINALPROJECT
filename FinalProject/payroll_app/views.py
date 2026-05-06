@@ -99,8 +99,7 @@ def payslips(request):
                     total_pay=total_pay
                 )
 
-                employee.overtime_pay = 0
-                employee.save()
+                employee.resetOvertime()
 
         if(message != ""):
             payslip_objects = Payslip.objects.all()
@@ -280,12 +279,12 @@ def add_overtime(request, id):
             messages.error(request, "Hours must be a valid number.")
             return redirect('employees')
 
-        # prevent negative or unrealistic values
-        if hours <= 0 or hours > 1000:
+        # prevent negative values
+        if hours <= 0:
             messages.error(request, "Enter a valid number of hours.")
             return redirect('employees')
 
-        # ensure overtime is not None
+        # if overtime is empty, treat it as zero so calculations dont break
         if emp.overtime_pay is None:
             emp.overtime_pay = 0
             emp.save()
