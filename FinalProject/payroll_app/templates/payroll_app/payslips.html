@@ -55,8 +55,8 @@
                     <label class="form-label fw-semibold">Payroll For:</label>
                     <select name="payroll_for" class="form-control" required>
                         <option value="all">All Employees</option>
-                        {% for emp in employees %}
-                            <option value="{{ emp.id_number }}">{{ emp.id_number }}</option>
+                        {% for a in employees %}
+                            <option value="{{ a.id_number }}">{{ a.id_number }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -65,8 +65,8 @@
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Month:</label>
                     <select name="month" class="form-control" required>
-                        {% for m in months %}
-                            <option value="{{ m }}">{{ m }}</option>
+                        {% for a in months %}
+                            <option value="{{ a }}">{{ a }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -113,26 +113,26 @@
 
             <tbody>
 
-                {% for p in payslips %}
+                {% for a in payslips %}
                 <tr>
 
-                    <td>{{ p.id_number.id_number }}</td>
+                    <td>{{ a.id_number.id_number }}</td>
 
                     <td>
-                        {{ p.month }} {{ p.date_range }}, {{ p.year }}
+                        {{ a.month }} {{ a.date_range }}, {{ a.year }}
                     </td>
 
-                    <td>{{ p.pay_cycle }}</td>
+                    <td>{{ a.pay_cycle }}</td>
 
                     <td>
-                        ₱ {{ p.total_pay|floatformat:2 }}
+                        ₱ {{ a.total_pay|floatformat:2 }}
                     </td>
 
                     <td>
-                        <a href="{% url 'view_payslip' p.pk %}" class="btn btn-sm btn-secondary"> View
+                        <a href="{% url 'view_payslip' a.pk %}" class="btn btn-sm btn-secondary"> View
                         </a>
 
-                        <a href="{% url 'delete_payslip' p.pk %}" class="btn btn-sm btn-danger"> Delete
+                        <a href="{% url 'delete_payslip' a.pk %}" class="btn btn-sm btn-danger"> Delete
                         </a>
                     </td>
 
