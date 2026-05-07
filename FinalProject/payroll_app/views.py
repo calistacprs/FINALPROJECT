@@ -21,14 +21,17 @@ def payslips(request):
         "September", "October", "November", "December"
     ]
 
+    # empty message for any errors
     message = ""
 
+    # checks if the form is submitted
     if(request.method == "POST"):
         payroll_for = request.POST.get("payroll_for")
         month = request.POST.get("month")
         year = request.POST.get("year")
         pay_cycle = request.POST.get("pay_cycle")
 
+        # calculates date range
         month_number = months.index(month) + 1
         last_day = calendar.monthrange(int(year), month_number)[1]
 
@@ -39,19 +42,22 @@ def payslips(request):
         else:
             date_range = "16-" + str(last_day)
 
+        # checks whether to show all employees or a specific id number
         if(payroll_for == "all"):
             selected_employees = Employee.objects.all()
+        # gets only selected employee
         else:
             selected_employees = Employee.objects.filter(id_number=payroll_for)
-
+        # goes through each selected employee
         for employee in selected_employees:
+            # checks if payslip already exists
             existing_payslip = Payslip.objects.filter(
                 id_number=employee,
                 month=month,
                 year=year,
                 pay_cycle=pay_cycle
             ).first()
-
+            # shows error message if payslip already exists
             if(existing_payslip):
                 message = "Payslip already exists for one or more selected employees."
             
@@ -105,6 +111,7 @@ def payslips(request):
 
                 employee.resetOvertime()
 
+        # if there is error message, reload page and show message
         if(message != ""):
             payslip_objects = Payslip.objects.all()
             return render(request, 'payroll_app/payslips.html', {
@@ -114,9 +121,10 @@ def payslips(request):
                 'message': message,
                 'current_user': current_user
             })
-
+        # go back to payslips page
         return redirect('payslips')
 
+    # displays payslips page if form is not submitted yet
     else:
         return render(request, 'payroll_app/payslips.html', {
             'employees': employee_objects,
