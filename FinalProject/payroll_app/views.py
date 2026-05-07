@@ -32,8 +32,10 @@ def payslips(request):
         month_number = months.index(month) + 1
         last_day = calendar.monthrange(int(year), month_number)[1]
 
+        # cycle 1 dates
         if(pay_cycle == "1"):
             date_range = "1-15"
+        # cycle 2 dates
         else:
             date_range = "16-" + str(last_day)
 
@@ -71,11 +73,13 @@ def payslips(request):
                 deductions_health = 0
                 sss = 0
 
+                # cycle 1 computation
                 if(pay_cycle == "1"):
                     pag_ibig = 100
                     taxable_amount = cycle_rate + allowance + overtime - pag_ibig
                     deductions_tax = taxable_amount * 0.20
                     total_pay = taxable_amount - deductions_tax
+                # cycle 2 computation
                 else:
                     deductions_health = rate * 0.04
                     sss = rate * 0.045
