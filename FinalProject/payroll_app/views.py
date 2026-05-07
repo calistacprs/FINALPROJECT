@@ -214,31 +214,36 @@ def create_employee(request):
 def update_employee(request, id):
     global current_user
 
+    # checks if there is logged in user
     if current_user is None:
         return redirect('login') 
     
+    # gets employee using the id from the URL
     emp = get_object_or_404(Employee, id=id)
 
+    # runs when the update form is submitted
     if request.method == "POST":
+        # get name and id number from form and strips extra spaces
         name = (request.POST.get('name') or "").strip()
         id_number = (request.POST.get('id_number') or "").strip()
-
+        # check if name/id number is blank
         if not name or not id_number:
             messages.error(request, "Name and ID Number are required.")
             return redirect('update_employee', id=id)
-
+        # tries to convert rate and allowance into numbers
         try:
             rate = float(request.POST.get('rate') or 0)
             allowance = float(request.POST.get('allowance') or 0)
+        # shows error if values are not valid numbers
         except ValueError:
             messages.error(request, "Rate and Allowance must be valid numbers.")
             return redirect('update_employee', id=id)
-
+        # checks if values are negative
         if rate < 0 or allowance < 0:
             messages.error(request, "Rate and Allowance cannot be negative.")
             return redirect('update_employee', id=id)
 
-        # prevent duplicate ID numbers (excluding current employee)
+        # checks if another employee has same ID number
         if Employee.objects.filter(id_number=id_number).exclude(id=id).exists():
             messages.error(request, "ID Number already exists.")
             return redirect('update_employee', id=id)
